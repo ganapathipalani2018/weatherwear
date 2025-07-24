@@ -10,7 +10,7 @@
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.yourcompany.weatherwear"
+      "bundleIdentifier": "org.mastery.weatherwear"
     },
     "android": {
       "adaptiveIcon": {
@@ -18,7 +18,7 @@
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
-      "package": "com.yourcompany.weatherwear",
+      "package": "org.mastery.weatherwear",
       "googleServicesFile": "./app/google-services.json"
     },
     "web": {
@@ -42,6 +42,11 @@
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "eas": {
+        "projectId": "b566283c-4fb7-48c6-baeb-6ebd19a90d17"
+      }
     }
   }
 }
