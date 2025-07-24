@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "415900197764",
+    "project_id": "weatherwear-7085f",
+    "storage_bucket": "weatherwear-7085f.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:415900197764:android:0eb386310514354e3ff3d1",
+        "android_client_info": {
+          "package_name": "org.mastery.weatherwear"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCEZXUbAV-WIqH9BsA251c698mDL4tQE_g"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
