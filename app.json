@@ -1,0 +1,12 @@
+{
+  "expo": {
+    "extra": {
+      "eas": {
+        "projectId": "01e6c4cb-4ae6-4a8f-a397-4ffbfcfed894"
+      }
+    },
+    "android": {
+      "package": "com.weatherwear.weatherapp"
+    }
+  }
+}
