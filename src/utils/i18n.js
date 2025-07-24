@@ -1,8 +1,6 @@
-// Placeholder for i18n utility
-import I18n from 'react-native-i18n';
+import * as RNLocalize from 'react-native-localize';
 
-I18n.fallbacks = true;
-I18n.translations = {
+const translations = {
   en: {
     welcome: 'Welcome to WeatherWear!',
     subtitle: 'Your weather-based outfit assistant',
@@ -65,8 +63,23 @@ I18n.translations = {
   },
 };
 
-export function setLanguage(lang) {
-  I18n.locale = lang;
+let currentLocale = RNLocalize.getLocales()[0]?.languageCode || 'en';
+
+function t(key) {
+  return translations[currentLocale]?.[key] || translations['en'][key] || key;
 }
 
+function setLanguage(lang) {
+  currentLocale = lang;
+}
+
+const I18n = {
+  t,
+  setLanguage,
+  get locale() {
+    return currentLocale;
+  },
+};
+
+export { setLanguage };
 export default I18n;
