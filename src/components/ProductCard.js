@@ -1,10 +1,8 @@
-import React, { useEffect, useState, useRef } from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity, Linking, Animated } from 'react-native';
-import I18n from '../utils/i18n';
-import analytics from '@react-native-firebase/analytics';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import React, { useEffect, useRef, useState } from 'react';
+import { Animated, Image, Linking, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import firestore from '@react-native-firebase/firestore';
+import I18n from '../utils/i18n';
 
 export default function ProductCard({ id, title, price, image, demographic, link, onFavoriteChange, userId }) {
   const [isFavorite, setIsFavorite] = useState(false);
@@ -30,15 +28,6 @@ export default function ProductCard({ id, title, price, image, demographic, link
     ]).start();
   };
 
-  const syncFavoritesToFirebase = async (favIds) => {
-    if (!userId) return;
-    try {
-      await firestore().collection('users').doc(userId).set({ favorites: favIds }, { merge: true });
-    } catch (e) {
-      // Ignore sync errors for now
-    }
-  };
-
   const toggleFavorite = async () => {
     const favs = await AsyncStorage.getItem('favorites');
     let favIds = favs ? JSON.parse(favs) : [];
@@ -53,16 +42,13 @@ export default function ProductCard({ id, title, price, image, demographic, link
       msg = 'Added to favorites';
     }
     await AsyncStorage.setItem('favorites', JSON.stringify(favIds));
-    syncFavoritesToFirebase(favIds);
     showToast(msg);
     if (onFavoriteChange) onFavoriteChange();
   };
 
   const handleBuy = async () => {
-    await analytics().logEvent('affiliate_link_click', {
-      product_id: id,
-      demographic,
-    });
+    // Log the event locally instead of Firebase
+    console.log('Affiliate link clicked:', { product_id: id, demographic });
     Linking.openURL(link);
   };
 

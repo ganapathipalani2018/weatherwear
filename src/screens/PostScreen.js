@@ -1,8 +1,7 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, Image, ActivityIndicator, Alert } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as ImagePicker from 'expo-image-picker';
-import storage from '@react-native-firebase/storage';
-import firestore from '@react-native-firebase/firestore';
+import React, { useState } from 'react';
+import { ActivityIndicator, Alert, Image, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
 const DEMOGRAPHICS = ['men', 'women', 'kids', 'unisex'];
 
@@ -31,22 +30,27 @@ export default function PostScreen() {
     }
     setUploading(true);
     try {
-      // Upload image to Firebase Storage
-      const filename = `posts/${Date.now()}_${Math.floor(Math.random()*10000)}.jpg`;
-      const ref = storage().ref(filename);
-      await ref.putFile(image);
-      const imageUrl = await ref.getDownloadURL();
-      // Save post to Firestore
-      await firestore().collection('posts').add({
-        imageUrl,
+      // Save post locally instead of Firebase
+      const newPost = {
+        id: Date.now().toString(),
+        imageUrl: image,
         caption,
         demographic,
-        createdAt: firestore.FieldValue.serverTimestamp(),
-      });
+        createdAt: new Date().toISOString(),
+      };
+      
+      // Get existing posts from local storage
+      const existingPosts = await AsyncStorage.getItem('localPosts');
+      const posts = existingPosts ? JSON.parse(existingPosts) : [];
+      posts.unshift(newPost);
+      
+      // Save back to local storage
+      await AsyncStorage.setItem('localPosts', JSON.stringify(posts));
+      
       setImage(null);
       setCaption('');
       setDemographic('unisex');
-      Alert.alert('Success', 'Post uploaded!');
+      Alert.alert('Success', 'Post saved locally!');
     } catch (e) {
       Alert.alert('Upload Error', e.message);
     }
@@ -80,7 +84,7 @@ export default function PostScreen() {
         ))}
       </View>
       <TouchableOpacity style={styles.uploadBtn} onPress={uploadPost} disabled={uploading}>
-        {uploading ? <ActivityIndicator color="#fff" /> : <Text style={styles.uploadBtnText}>Upload Post</Text>}
+        {uploading ? <ActivityIndicator color="#fff" /> : <Text style={styles.uploadBtnText}>Save Post</Text>}
       </TouchableOpacity>
     </View>
   );

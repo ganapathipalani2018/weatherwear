@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, FlatList, Image, ActivityIndicator } from 'react-native';
-import firestore from '@react-native-firebase/firestore';
+import { ActivityIndicator, FlatList, Image, StyleSheet, Text, View } from 'react-native';
 
 export default function FeedScreen() {
   const [posts, setPosts] = useState([]);
@@ -8,21 +7,33 @@ export default function FeedScreen() {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const unsubscribe = firestore()
-      .collection('posts')
-      .orderBy('createdAt', 'desc')
-      .onSnapshot(
-        snapshot => {
-          const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-          setPosts(data);
-          setLoading(false);
-        },
-        err => {
-          setError('Failed to load posts');
-          setLoading(false);
-        }
-      );
-    return () => unsubscribe();
+    // Mock data instead of Firebase
+    const mockPosts = [
+      {
+        id: '1',
+        imageUrl: 'https://via.placeholder.com/220x220/2196F3/FFFFFF?text=Try+On+1',
+        caption: 'Perfect outfit for today\'s weather!',
+        demographic: 'men'
+      },
+      {
+        id: '2',
+        imageUrl: 'https://via.placeholder.com/220x220/4CAF50/FFFFFF?text=Try+On+2',
+        caption: 'Stylish and comfortable!',
+        demographic: 'women'
+      },
+      {
+        id: '3',
+        imageUrl: 'https://via.placeholder.com/220x220/FF9800/FFFFFF?text=Try+On+3',
+        caption: 'Great for outdoor activities',
+        demographic: 'unisex'
+      }
+    ];
+    
+    // Simulate loading
+    setTimeout(() => {
+      setPosts(mockPosts);
+      setLoading(false);
+    }, 1000);
   }, []);
 
   if (loading) {
