@@ -7,6 +7,7 @@ import React, { useEffect, useState } from 'react';
 import { Text, View } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import ARTryOnScreen from './src/screens/ARTryOnScreen';
+import AuthScreen from './src/screens/AuthScreen';
 import FavoritesScreen from './src/screens/FavoritesScreen';
 import FeedScreen from './src/screens/FeedScreen';
 import HomeScreen from './src/screens/HomeScreen';
@@ -123,6 +124,7 @@ export default function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="Auth" component={AuthScreen} />
         <Stack.Screen name="MainTabs" component={MainTabs} />
       </Stack.Navigator>
     </NavigationContainer>

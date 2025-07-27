@@ -1,54 +1,38 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, Alert } from 'react-native';
-import auth from '@react-native-firebase/auth';
-import { GoogleSignin } from '@react-native-google-signin/google-signin';
+import React, { useState } from 'react';
+import { Alert, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
 export default function AuthScreen({ navigation }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    GoogleSignin.configure({
-      webClientId: '415900197764-q1sc3hvjrhv4jgt1tps2a3dlv3ljh75f.apps.googleusercontent.com',
-    });
-  }, []);
-
-  const handleEmailLogin = async () => {
+  const handleLogin = async () => {
     setLoading(true);
     try {
-      await auth().signInWithEmailAndPassword(email, password);
-      navigation.replace('MainTabs');
-    } catch (e) {
-      if (e.code === 'auth/user-not-found') {
-        try {
-          await auth().createUserWithEmailAndPassword(email, password);
-          navigation.replace('MainTabs');
-        } catch (err) {
-          Alert.alert('Error', err.message);
-        }
-      } else {
-        Alert.alert('Error', e.message);
+      // Simple validation
+      if (!email || !password) {
+        Alert.alert('Error', 'Please enter both email and password');
+        return;
       }
-    }
-    setLoading(false);
-  };
-
-  const handleGoogleLogin = async () => {
-    try {
-      await GoogleSignin.hasPlayServices();
-      const { idToken } = await GoogleSignin.signIn();
-      const googleCredential = auth.GoogleAuthProvider.credential(idToken);
-      await auth().signInWithCredential(googleCredential);
+      
+      // For now, just navigate to main app
+      // In a real app, you would validate credentials here
       navigation.replace('MainTabs');
     } catch (e) {
       Alert.alert('Error', e.message);
     }
+    setLoading(false);
+  };
+
+  const handleSkipAuth = () => {
+    navigation.replace('MainTabs');
   };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Sign In</Text>
+      <Text style={styles.title}>Welcome to WeatherWear</Text>
+      <Text style={styles.subtitle}>Sign in to continue</Text>
+      
       <TextInput
         style={styles.input}
         placeholder="Email"
@@ -64,11 +48,13 @@ export default function AuthScreen({ navigation }) {
         onChangeText={setPassword}
         secureTextEntry
       />
-      <TouchableOpacity style={styles.loginBtn} onPress={handleEmailLogin} disabled={loading}>
-        <Text style={styles.loginBtnText}>{loading ? 'Loading...' : 'Sign In / Register'}</Text>
+      
+      <TouchableOpacity style={styles.loginBtn} onPress={handleLogin} disabled={loading}>
+        <Text style={styles.loginBtnText}>{loading ? 'Loading...' : 'Sign In'}</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.googleBtn} onPress={handleGoogleLogin}>
-        <Text style={styles.googleBtnText}>Sign in with Google</Text>
+      
+      <TouchableOpacity style={styles.skipBtn} onPress={handleSkipAuth}>
+        <Text style={styles.skipBtnText}>Skip Authentication</Text>
       </TouchableOpacity>
     </View>
   );
@@ -83,10 +69,17 @@ const styles = StyleSheet.create({
     padding: 24,
   },
   title: {
-    fontSize: 24,
+    fontSize: 28,
     fontWeight: 'bold',
-    marginBottom: 24,
+    marginBottom: 8,
     color: '#222',
+    textAlign: 'center',
+  },
+  subtitle: {
+    fontSize: 16,
+    color: '#666',
+    marginBottom: 32,
+    textAlign: 'center',
   },
   input: {
     width: '100%',
@@ -105,24 +98,21 @@ const styles = StyleSheet.create({
     borderRadius: 24,
     alignItems: 'center',
     marginBottom: 16,
+    width: '100%',
   },
   loginBtnText: {
     color: '#fff',
     fontWeight: 'bold',
     fontSize: 17,
   },
-  googleBtn: {
-    backgroundColor: '#fff',
-    borderWidth: 1,
-    borderColor: '#2196F3',
+  skipBtn: {
     paddingVertical: 12,
     paddingHorizontal: 32,
-    borderRadius: 24,
     alignItems: 'center',
   },
-  googleBtnText: {
+  skipBtnText: {
     color: '#2196F3',
     fontWeight: 'bold',
-    fontSize: 17,
+    fontSize: 16,
   },
 }); 
