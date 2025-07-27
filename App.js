@@ -1,40 +1,19 @@
-import React, { useRef, useEffect, useState } from 'react';
-import { NavigationContainer } from '@react-navigation/native';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import HomeScreen from './src/screens/HomeScreen';
-import ARTryOnScreen from './src/screens/ARTryOnScreen';
-import WeatherScreen from './src/screens/WeatherScreen';
-import ProductCatalog from './src/screens/ProductCatalog';
-import FeedScreen from './src/screens/FeedScreen';
-import PostScreen from './src/screens/PostScreen';
-import MyTryOnsScreen from './src/screens/MyTryOnsScreen';
-import FavoritesScreen from './src/screens/FavoritesScreen';
-import OnboardingScreen from './src/screens/OnboardingScreen';
-import AuthScreen from './src/screens/AuthScreen';
-import { View, Text } from 'react-native';
-import Icon from 'react-native-vector-icons/FontAwesome';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import * as MediaLibrary from 'expo-media-library';
-import auth from '@react-native-firebase/auth';
-// Firebase setup
-import firebase from '@react-native-firebase/app';
-import analytics from '@react-native-firebase/analytics';
-import Constants from 'expo-constants';
-
-const firebaseConfig = Constants.expoConfig?.extra?.firebase || {
-  apiKey: 'YOUR_API_KEY',
-  authDomain: 'YOUR_AUTH_DOMAIN',
-  projectId: 'YOUR_PROJECT_ID',
-  storageBucket: 'YOUR_STORAGE_BUCKET',
-  messagingSenderId: 'YOUR_MESSAGING_SENDER_ID',
-  appId: 'YOUR_APP_ID',
-  measurementId: 'YOUR_MEASUREMENT_ID',
-};
-
-if (!firebase.apps.length) {
-  firebase.initializeApp(firebaseConfig);
-}
+import React, { useEffect, useState } from 'react';
+import { Text, View } from 'react-native';
+import Icon from 'react-native-vector-icons/FontAwesome';
+import ARTryOnScreen from './src/screens/ARTryOnScreen';
+import FavoritesScreen from './src/screens/FavoritesScreen';
+import FeedScreen from './src/screens/FeedScreen';
+import HomeScreen from './src/screens/HomeScreen';
+import MyTryOnsScreen from './src/screens/MyTryOnsScreen';
+import PostScreen from './src/screens/PostScreen';
+import ProductCatalog from './src/screens/ProductCatalog';
+import WeatherScreen from './src/screens/WeatherScreen';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -117,7 +96,7 @@ function MyTryOnsTabIcon({ focused }) {
   );
 }
 
-function MainTabs({ userId }) {
+function MainTabs() {
   return (
     <Tab.Navigator initialRouteName="Home">
       <Tab.Screen name="Home" component={HomeScreen} />
@@ -126,7 +105,7 @@ function MainTabs({ userId }) {
       <Tab.Screen name="Catalog" component={ProductCatalog} />
       <Tab.Screen
         name="Favorites"
-        children={props => <FavoritesScreen {...props} userId={userId} />}
+        component={FavoritesScreen}
         options={{ tabBarIcon: FavoritesTabIcon }}
       />
       <Tab.Screen name="Feed" component={FeedScreen} />
@@ -141,56 +120,10 @@ function MainTabs({ userId }) {
 }
 
 export default function App() {
-  const routeNameRef = useRef();
-  const navigationRef = useRef();
-  const [initializing, setInitializing] = useState(true);
-  const [user, setUser] = useState(null);
-
-  useEffect(() => {
-    const unsubscribe = auth().onAuthStateChanged(u => {
-      setUser(u);
-      setInitializing(false);
-    });
-    return unsubscribe;
-  }, []);
-
-  if (initializing) {
-    return null;
-  }
-
   return (
-    <NavigationContainer
-      ref={navigationRef}
-      onReady={() => {
-        routeNameRef.current = navigationRef.current.getCurrentRoute().name;
-        analytics().logScreenView({
-          screen_name: routeNameRef.current,
-          screen_class: routeNameRef.current,
-        });
-      }}
-      onStateChange={async () => {
-        const previousRouteName = routeNameRef.current;
-        const currentRouteName = navigationRef.current.getCurrentRoute().name;
-        if (previousRouteName !== currentRouteName) {
-          await analytics().logScreenView({
-            screen_name: currentRouteName,
-            screen_class: currentRouteName,
-          });
-        }
-        routeNameRef.current = currentRouteName;
-      }}
-    >
+    <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
-        {!user ? (
-          <>
-            <Stack.Screen name="Onboarding" component={OnboardingScreen} />
-            <Stack.Screen name="Auth" component={AuthScreen} />
-          </>
-        ) : (
-          <Stack.Screen name="MainTabs">
-            {props => <MainTabs {...props} userId={user.uid} />}
-          </Stack.Screen>
-        )}
+        <Stack.Screen name="MainTabs" component={MainTabs} />
       </Stack.Navigator>
     </NavigationContainer>
   );
