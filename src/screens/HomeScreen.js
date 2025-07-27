@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, Picker, Platform } from 'react-native';
-import { BannerAd, BannerAdSize, TestIds } from 'react-native-google-mobile-ads';
+import { Picker, Platform, StyleSheet, Text, View } from 'react-native';
 import I18n, { setLanguage } from '../utils/i18n';
-import analytics from '@react-native-firebase/analytics';
 
 const LANGUAGES = [
   { label: 'English', value: 'en' },
@@ -17,10 +15,6 @@ export default function HomeScreen() {
   const handleLangChange = (value) => {
     setLang(value);
     setLanguage(value);
-  };
-
-  const handleAdClick = async () => {
-    await analytics().logEvent('ad_click', { screen: 'Home' });
   };
 
   return (
@@ -51,15 +45,6 @@ export default function HomeScreen() {
       </View>
       <Text style={styles.title}>{I18n.t('welcome')}</Text>
       <Text style={styles.subtitle}>{I18n.t('subtitle')}</Text>
-      <View style={{ flex: 1 }} />
-      <BannerAd
-        unitId={TestIds.BANNER}
-        size={BannerAdSize.SMART_BANNER}
-        requestOptions={{ requestNonPersonalizedAdsOnly: true }}
-        onAdLoaded={handleAdClick}
-        onAdOpened={handleAdClick}
-        style={styles.ad}
-      />
     </View>
   );
 }
@@ -96,9 +81,5 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#666',
     textAlign: 'center',
-  },
-  ad: {
-    alignSelf: 'center',
-    marginBottom: 10,
   },
 });
