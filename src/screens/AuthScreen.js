@@ -30,32 +30,37 @@ export default function AuthScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Welcome to WeatherWear</Text>
-      <Text style={styles.subtitle}>Sign in to continue</Text>
+      <View style={styles.logoContainer}>
+        <Text style={styles.logo}>🌤️</Text>
+        <Text style={styles.title}>WeatherWear</Text>
+        <Text style={styles.subtitle}>Your Smart Weather & Fashion Companion</Text>
+      </View>
       
-      <TextInput
-        style={styles.input}
-        placeholder="Email"
-        value={email}
-        onChangeText={setEmail}
-        autoCapitalize="none"
-        keyboardType="email-address"
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Password"
-        value={password}
-        onChangeText={setPassword}
-        secureTextEntry
-      />
-      
-      <TouchableOpacity style={styles.loginBtn} onPress={handleLogin} disabled={loading}>
-        <Text style={styles.loginBtnText}>{loading ? 'Loading...' : 'Sign In'}</Text>
-      </TouchableOpacity>
-      
-      <TouchableOpacity style={styles.skipBtn} onPress={handleSkipAuth}>
-        <Text style={styles.skipBtnText}>Skip Authentication</Text>
-      </TouchableOpacity>
+      <View style={styles.formContainer}>
+        <TextInput
+          style={styles.input}
+          placeholder="Email"
+          value={email}
+          onChangeText={setEmail}
+          keyboardType="email-address"
+          autoCapitalize="none"
+        />
+        <TextInput
+          style={styles.input}
+          placeholder="Password"
+          value={password}
+          onChangeText={setPassword}
+          secureTextEntry
+        />
+        
+        <TouchableOpacity style={styles.loginBtn} onPress={handleLogin} disabled={loading}>
+          <Text style={styles.loginBtnText}>{loading ? 'Loading...' : 'Sign In'}</Text>
+        </TouchableOpacity>
+        
+        <TouchableOpacity style={styles.skipBtn} onPress={handleSkipAuth}>
+          <Text style={styles.skipBtnText}>Skip Authentication</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 }
@@ -63,33 +68,46 @@ export default function AuthScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
+    backgroundColor: '#f5f5f5',
     justifyContent: 'center',
-    padding: 24,
+    padding: 20,
+  },
+  logoContainer: {
+    alignItems: 'center',
+    marginBottom: 40,
+  },
+  logo: {
+    fontSize: 60,
+    marginBottom: 10,
   },
   title: {
-    fontSize: 28,
+    fontSize: 32,
     fontWeight: 'bold',
     marginBottom: 8,
-    color: '#222',
+    color: '#2196F3',
     textAlign: 'center',
   },
   subtitle: {
     fontSize: 16,
     color: '#666',
-    marginBottom: 32,
     textAlign: 'center',
   },
+  formContainer: {
+    backgroundColor: '#fff',
+    padding: 20,
+    borderRadius: 12,
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 2,
+  },
   input: {
-    width: '100%',
-    backgroundColor: '#f5f5f5',
-    borderRadius: 8,
-    padding: 12,
-    fontSize: 16,
-    marginBottom: 14,
     borderWidth: 1,
     borderColor: '#ddd',
+    borderRadius: 8,
+    padding: 12,
+    marginBottom: 16,
+    fontSize: 16,
   },
   loginBtn: {
     backgroundColor: '#2196F3',
@@ -108,7 +126,9 @@ const styles = StyleSheet.create({
   skipBtn: {
     paddingVertical: 12,
     paddingHorizontal: 32,
+    borderRadius: 24,
     alignItems: 'center',
+    width: '100%',
   },
   skipBtnText: {
     color: '#2196F3',
