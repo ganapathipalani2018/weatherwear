@@ -1,75 +1,119 @@
-import { Image } from 'expo-image';
-import { Platform, StyleSheet } from 'react-native';
+import { Picker } from '@react-native-picker/picker';
+import React, { useState } from 'react';
+import { Platform, StyleSheet, Text, View } from 'react-native';
 
-import { HelloWave } from '@/components/HelloWave';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
+const LANGUAGES = [
+  { label: 'English', value: 'en' },
+  { label: 'हिन्दी', value: 'hi' },
+  { label: 'தமிழ்', value: 'ta' },
+  { label: 'ಕನ್ನಡ', value: 'kn' },
+];
 
 export default function HomeScreen() {
+  const [lang, setLang] = useState('en');
+
+  const handleLangChange = (value: string) => {
+    setLang(value);
+  };
+
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12',
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-        <ThemedText>
-          {`Tap the Explore tab to learn more about what's included in this starter app.`}
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          {`When you're ready, run `}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+    <View style={styles.container}>
+      <View style={styles.langRow}>
+        <Text style={styles.langLabel}>🌐</Text>
+        {Platform.OS === 'ios' ? (
+          <Picker
+            selectedValue={lang}
+            style={styles.picker}
+            onValueChange={handleLangChange}
+          >
+            {LANGUAGES.map(l => (
+              <Picker.Item key={l.value} label={l.label} value={l.value} />
+            ))}
+          </Picker>
+        ) : (
+          <Picker
+            selectedValue={lang}
+            style={styles.picker}
+            onValueChange={handleLangChange}
+          >
+            {LANGUAGES.map(l => (
+              <Picker.Item key={l.value} label={l.label} value={l.value} />
+            ))}
+          </Picker>
+        )}
+      </View>
+      
+      <Text style={styles.title}>Welcome to WeatherWear!</Text>
+      <Text style={styles.subtitle}>Your Smart Weather & Fashion Companion</Text>
+      
+      <View style={styles.featuresContainer}>
+        <Text style={styles.featureTitle}>Features:</Text>
+        <Text style={styles.feature}>• Weather-based clothing recommendations</Text>
+        <Text style={styles.feature}>• AR Try-On for virtual fitting</Text>
+        <Text style={styles.feature}>• Product catalog with favorites</Text>
+        <Text style={styles.feature}>• Social feed and sharing</Text>
+        <Text style={styles.feature}>• Multi-language support</Text>
+      </View>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  titleContainer: {
+  container: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'flex-start',
+    backgroundColor: '#f5f5f5',
+    paddingTop: 40,
+    paddingHorizontal: 20,
+  },
+  langRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
+    marginBottom: 16,
   },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
+  langLabel: {
+    fontSize: 20,
+    marginRight: 8,
   },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
+  picker: {
+    height: 40,
+    width: 160,
+    fontSize: 16,
+  },
+  title: {
+    fontSize: 28,
+    fontWeight: 'bold',
+    marginBottom: 10,
+    textAlign: 'center',
+    color: '#2196F3',
+  },
+  subtitle: {
+    fontSize: 16,
+    color: '#666',
+    textAlign: 'center',
+    marginBottom: 30,
+  },
+  featuresContainer: {
+    backgroundColor: '#fff',
+    padding: 20,
+    borderRadius: 12,
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 2,
+    width: '100%',
+  },
+  featureTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 12,
+    color: '#333',
+  },
+  feature: {
+    fontSize: 14,
+    color: '#666',
+    marginBottom: 6,
+    lineHeight: 20,
   },
 });
