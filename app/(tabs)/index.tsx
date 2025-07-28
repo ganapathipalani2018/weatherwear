@@ -1,6 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Picker } from '@react-native-picker/picker';
 import * as Location from 'expo-location';
+import { useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import { Alert, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { fetchWeatherByLocation } from '../../src/api/weather';
@@ -39,6 +40,9 @@ const TRANSLATIONS = {
     pressure: 'Pressure',
     visibility: 'Visibility',
     dewPoint: 'Dew Point',
+    weatherSource: 'Weather Source',
+    realTimeData: 'Real-time data from OpenWeatherMap',
+    mockDataNote: 'Some details are simulated for demo',
   },
   hi: {
     welcome: 'WeatherWear में आपका स्वागत है!',
@@ -66,6 +70,9 @@ const TRANSLATIONS = {
     pressure: 'दबाव',
     visibility: 'दृश्यता',
     dewPoint: 'ओस बिंदु',
+    weatherSource: 'मौसम स्रोत',
+    realTimeData: 'OpenWeatherMap से रीयल-टाइम डेटा',
+    mockDataNote: 'कुछ विवरण डेमो के लिए सिमुलेटेड हैं',
   },
   ta: {
     welcome: 'WeatherWear க்கு வரவேற்கிறோம்!',
@@ -93,6 +100,9 @@ const TRANSLATIONS = {
     pressure: 'அழுத்தம்',
     visibility: 'பார்வை',
     dewPoint: 'பனி புள்ளி',
+    weatherSource: 'வானிலை மூலம்',
+    realTimeData: 'OpenWeatherMap இலிருந்து நேரலை தரவு',
+    mockDataNote: 'சில விவரங்கள் டெமோவிற்கு சிமுலேட் செய்யப்பட்டுள்ளன',
   },
   kn: {
     welcome: 'WeatherWear ಗೆ ಸುಸ್ವಾಗತ!',
@@ -120,6 +130,9 @@ const TRANSLATIONS = {
     pressure: 'ಒತ್ತಡ',
     visibility: 'ದೃಷ್ಟಿ',
     dewPoint: 'ತುಪ್ಪುಳ ಬಿಂದು',
+    weatherSource: 'ಹವಾಮಾನ ಮೂಲ',
+    realTimeData: 'OpenWeatherMap ನಿಂದ ನೈಜ-ಸಮಯದ ಡೇಟಾ',
+    mockDataNote: 'ಕೆಲವು ವಿವರಗಳು ಡೆಮೋಗಾಗಿ ಸಿಮ್ಯುಲೇಟ್ ಮಾಡಲಾಗಿದೆ',
   },
 };
 
@@ -135,10 +148,11 @@ const WEATHER_ICONS = {
 };
 
 export default function HomeScreen() {
+  const router = useRouter();
   const [lang, setLang] = useState('en');
-  const [weatherData, setWeatherData] = useState(null);
+  const [weatherData, setWeatherData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  const [location, setLocation] = useState(null);
+  const [location, setLocation] = useState<any>(null);
 
   useEffect(() => {
     loadLanguage();
@@ -203,7 +217,32 @@ export default function HomeScreen() {
     }
   };
 
-  const t = TRANSLATIONS[lang] || TRANSLATIONS.en;
+  const handleQuickAction = (action: string) => {
+    switch (action) {
+      case 'weather':
+        Alert.alert('Weather Details', 'This would open detailed weather screen with hourly/daily forecasts');
+        break;
+      case 'arTryOn':
+        Alert.alert('AR Try-On', 'This would open camera for virtual try-on of clothing items');
+        break;
+      case 'catalog':
+        Alert.alert('Product Catalog', 'This would show clothing items with weather-based recommendations');
+        break;
+      case 'social':
+        Alert.alert('Social Feed', 'This would show community posts and fashion inspiration');
+        break;
+      case 'favorites':
+        Alert.alert('Favorites', 'This would show your saved clothing items and preferences');
+        break;
+      case 'myTryOns':
+        Alert.alert('My Try-Ons', 'This would show photos from your AR try-on sessions');
+        break;
+      default:
+        Alert.alert('Feature Coming Soon', 'This feature will be available in the full app');
+    }
+  };
+
+  const t = TRANSLATIONS[lang as keyof typeof TRANSLATIONS] || TRANSLATIONS.en;
 
   if (loading) {
     return (
@@ -296,6 +335,13 @@ export default function HomeScreen() {
               <Text style={styles.sunTime}>{weatherData.sunset}</Text>
             </View>
           </View>
+
+          {/* Weather Data Source Info */}
+          <View style={styles.dataSourceSection}>
+            <Text style={styles.dataSourceTitle}>{t.weatherSource}</Text>
+            <Text style={styles.dataSourceText}>{t.realTimeData}</Text>
+            <Text style={styles.mockDataNote}>{t.mockDataNote}</Text>
+          </View>
         </View>
       )}
 
@@ -303,27 +349,45 @@ export default function HomeScreen() {
       <View style={styles.actionsSection}>
         <Text style={styles.sectionTitle}>{t.features}</Text>
         <View style={styles.actionGrid}>
-          <TouchableOpacity style={styles.actionCard}>
+          <TouchableOpacity 
+            style={styles.actionCard} 
+            onPress={() => handleQuickAction('weather')}
+          >
             <Text style={styles.actionIcon}>🌤️</Text>
             <Text style={styles.actionText}>{t.currentWeather}</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.actionCard}>
+          <TouchableOpacity 
+            style={styles.actionCard} 
+            onPress={() => handleQuickAction('arTryOn')}
+          >
             <Text style={styles.actionIcon}>📷</Text>
             <Text style={styles.actionText}>{t.arTryOn}</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.actionCard}>
+          <TouchableOpacity 
+            style={styles.actionCard} 
+            onPress={() => handleQuickAction('catalog')}
+          >
             <Text style={styles.actionIcon}>🛍️</Text>
             <Text style={styles.actionText}>{t.catalog}</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.actionCard}>
+          <TouchableOpacity 
+            style={styles.actionCard} 
+            onPress={() => handleQuickAction('social')}
+          >
             <Text style={styles.actionIcon}>📱</Text>
             <Text style={styles.actionText}>{t.social}</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.actionCard}>
+          <TouchableOpacity 
+            style={styles.actionCard} 
+            onPress={() => handleQuickAction('favorites')}
+          >
             <Text style={styles.actionIcon}>❤️</Text>
             <Text style={styles.actionText}>{t.favorites}</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.actionCard}>
+          <TouchableOpacity 
+            style={styles.actionCard} 
+            onPress={() => handleQuickAction('myTryOns')}
+          >
             <Text style={styles.actionIcon}>📸</Text>
             <Text style={styles.actionText}>{t.myTryOns}</Text>
           </TouchableOpacity>
@@ -543,5 +607,29 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#666',
     flex: 1,
+  },
+  dataSourceSection: {
+    backgroundColor: 'rgba(255,255,255,0.1)',
+    borderRadius: 8,
+    padding: 12,
+    marginTop: 20,
+    alignItems: 'center',
+  },
+  dataSourceTitle: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    color: '#fff',
+    marginBottom: 4,
+  },
+  dataSourceText: {
+    fontSize: 12,
+    color: '#fff',
+    opacity: 0.8,
+    marginBottom: 4,
+  },
+  mockDataNote: {
+    fontSize: 10,
+    color: '#fff',
+    opacity: 0.6,
   },
 });
